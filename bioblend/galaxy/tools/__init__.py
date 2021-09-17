@@ -169,6 +169,42 @@ class ToolClient(Client):
         params['link_details'] = link_details
         return self._get(id=tool_id, params=params)
 
+    def build_tool(self, tool_id, io_details=False, link_details=False, inputs=None, history_id=None):
+
+
+        """
+        Get details of a given tool.
+
+        :type tool_id: str
+        :param tool_id: id of the requested tool
+
+        :type io_details: bool
+        :param io_details: whether to get also input and output details
+
+        :type link_details: bool
+        :param link_details: whether to get also link details
+
+        :rtype: dict
+        :return: Information about the tool's interface
+        """
+        params = {}
+
+        if inputs:
+          params['inputs'] = inputs
+
+        # print(params)
+
+        if history_id:
+          params['history_id'] = history_id
+
+        url = '/'.join((self.gi.url, 'tools', tool_id, 'build'))
+
+        # params['io_details'] = io_details
+        # params['link_details'] = link_details
+        
+        return self._post(payload=params, url=url)
+
+
     def run_tool(self, history_id, tool_id, tool_inputs, input_format='legacy'):
         """
         Runs tool specified by ``tool_id`` in history indicated
