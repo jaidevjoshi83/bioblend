@@ -8,6 +8,9 @@ from typing import List
 from bioblend.galaxy.client import Client
 from bioblend.util import attach_file
 
+import logging
+log = logging.getLogger(__name__)
+
 
 class ToolClient(Client):
     module = 'tools'
@@ -169,33 +172,36 @@ class ToolClient(Client):
         params['link_details'] = link_details
         return self._get(id=tool_id, params=params)
 
-    def build_tool(self, tool_id, io_details=False, link_details=False, inputs=None, history_id=None):
-
+    def build_tool(self, tool_id, inputs=None, tool_version=None, history_id=None):
 
         """
         Get details of a given tool.
 
+        :type inputs: dict
+        :param inputs: dictionary of tool parameters         
+
         :type tool_id: str
         :param tool_id: id of the requested tool
 
-        :type io_details: bool
-        :param io_details: whether to get also input and output details
+        :type history_id str
+        :param history_id: id of the requested history
 
-        :type link_details: bool
-        :param link_details: whether to get also link details
+        :type tool_version str
+        :param tool_version: version of the requested tool 
 
         :rtype: dict
-        :return: Information about the tool's interface
+        :return: Returns a tool model including dynamic parameters and updated values, repeats block etc.
         """
         params = {}
 
         if inputs:
-          params['inputs'] = inputs
+        	params['inputs'] = inputs
 
-        # print(params)
+        if tool_version:
+        	params['tool_version'] = tool_version
 
         if history_id:
-          params['history_id'] = history_id
+        	params['history_id'] = history_id
 
         url = '/'.join((self.gi.url, 'tools', tool_id, 'build'))
 
